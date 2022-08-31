@@ -2,25 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/baconpb/task/queue"
 	"sync"
 	"sync/atomic"
 	"time"
 )
-
-func Get(controlMap sync.Map, key string) string {
-	res, ok := controlMap.Load(key)
-	if ok {
-		fmt.Println(res.(string))
-		return res.(string)
-	}
-	return ""
-}
-func Set(controlMap sync.Map, key string, value string) {
-	controlMap.Store(key, value)
-}
-func Remove(controlMap sync.Map, key string) {
-	controlMap.Delete(key)
-}
 
 func main() {
 	var unique = atomic.Int64{}
@@ -43,8 +29,8 @@ func main() {
 
 	var controlMap sync.Map
 	for i := 1; i <= 1000000; i++ {
-		go Set(controlMap, fmt.Sprintf("%d", i), fmt.Sprintf("%d", i))
-		go Get(controlMap, fmt.Sprintf("%d", i))
+		go queue.Set(controlMap, fmt.Sprintf("%d", i), fmt.Sprintf("%d", i))
+		go queue.Get(controlMap, fmt.Sprintf("%d", i))
 	}
 	var m1 = make(map[string]map[string]interface{})
 	m1["hi"] = map[string]interface{}{"hello": "world"}
